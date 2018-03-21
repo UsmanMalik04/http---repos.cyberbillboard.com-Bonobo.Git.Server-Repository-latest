@@ -1,0 +1,370 @@
+﻿<Controls:MetroWindow   
+        x:Class="LDWApp.MainWindow"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LDWApp"
+        xmlns:local1="clr-namespace:LDW.Models;assembly=LDW"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Normal"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"
+        BorderBrush="{DynamicResource AccentColorBrush}" 
+        GlowBrush="{DynamicResource AccentColorBrush}"
+        dialogs:DialogParticipation.Register="{Binding}"
+        Icon="pack://application:,,,/Icon/AppIcon.png"
+        IconEdgeMode="Aliased"
+       
+        Title="Live Wallpapers" Width="1000" Height="630" FontStretch="Medium" ResizeMode="CanMinimize" AllowsTransparency="True" WindowStartupLocation="CenterScreen" WindowState="{Binding Path=state,Mode=TwoWay}" WindowStyle="None"
+        Background="#61616142" Loaded="MetroWindow_Loaded" MouseDown="MetroWindow_MouseDown" >
+       
+
+
+
+        <Window.Resources>
+        <DataTemplate x:Key="Choices">
+            <md:Chip x:Name="CurrentDesc" Content="{Binding XPath=s:Name}">
+                <md:Chip.Icon>
+                    <Image Source="{Binding XPath=s:Icon}"/>
+                </md:Chip.Icon>
+            </md:Chip>
+        </DataTemplate>
+        <Style x:Key="myHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="Visibility" Value="Collapsed" />
+        </Style>
+            
+        <ControlTemplate x:Key="ConfigDataTemplate" >
+            <Grid MouseDown="MetroWindow_MouseDown" Grid.IsSharedSizeScope="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="labels" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="labels" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0"
+                               Grid.Column="0"
+                               Margin="2"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Text="Selected" />
+                <CheckBox Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="2"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding IsEnabled}" />
+            </Grid>
+        </ControlTemplate>
+        <local:ImgConverter x:Key="imgConverter" />
+        <local1:StatusConverter x:Key="statusConverter" />
+        <XmlDataProvider x:Key="themes">
+            <XmlDataProvider.XmlNamespaceManager>
+                <XmlNamespaceMappingCollection>
+                    <XmlNamespaceMapping Uri="http://schemas.datacontract.org/2004/07/LDWSVC.Models" Prefix="s" />
+                </XmlNamespaceMappingCollection>
+            </XmlDataProvider.XmlNamespaceManager>
+        </XmlDataProvider>
+        <XmlDataProvider x:Key="current">
+            <XmlDataProvider.XmlNamespaceManager>
+                <XmlNamespaceMappingCollection>
+                    <XmlNamespaceMapping Uri="http://schemas.datacontract.org/2004/07/LDWSVC.Models" Prefix="s" />
+                </XmlNamespaceMappingCollection>
+            </XmlDataProvider.XmlNamespaceManager>
+        </XmlDataProvider>
+
+        <DataTemplate DataType="{x:Type local1:Photo}" x:Key="LargeImage">
+            <Border Margin="3">
+                <Grid  MouseDown="MetroWindow_MouseDown">
+                    <Image Source="{Binding Path=FileInfo, Converter={StaticResource imgConverter},ConverterParameter = 600, IsAsync=True}"  Width="auto" Height="auto" MouseDown="aPicture_MouseDown"/>
+                    <CheckBox x:Name="StatusDeleteBtn" Width="20" Margin="0,0,0,0" CommandParameter="{Binding}" Background="Transparent"
+                            Command="{Binding DataContext.PhotoStatusCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                            ToolTip="{Binding Converter={StaticResource statusConverter}}"
+                            Style="{DynamicResource MetroCircleButtonStyle}" VerticalAlignment="Bottom" HorizontalContentAlignment="Stretch" HorizontalAlignment="Right">
+                        <iconPacks:PackIconModern x:Name="PhotoStatus" Height="auto" Width="auto"   Kind="Stamp"  />
+                    </CheckBox>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Opacity" Value="1"/>
+            <Setter Property="MaxHeight" Value="75" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="true">
+                    <Trigger.Setters>
+                        <Setter Property="Opacity" Value="1.0" />
+                        <Setter Property="FocusManager.FocusedElement"  Value="{Binding RelativeSource={RelativeSource Self}}" />
+                    </Trigger.Setters>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid VerticalAlignment="Stretch" Background="#61616142" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="49*"/>
+        </Grid.ColumnDefinitions>
+        <md:Card Padding="12" Margin="18,0,0,0"  Background="Transparent" Grid.ColumnSpan="3" >
+            <Grid Margin="0"  >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="27*"/>
+                </Grid.RowDefinitions>
+                <StackPanel x:Name="ExpanderStack" MouseDown="MetroWindow_MouseDown">
+
+                    <Expander MouseDown="MetroWindow_MouseDown" Header="Current" 
+                              HorizontalAlignment="Left"
+                              Background="#252525"
+                              Margin="0,10,0,10"
+                              VerticalAlignment="Top"
+                              Opacity="0.90"
+                              IsExpanded="True"                
+                              Height="auto"
+                              Width="903" Grid.RowSpan="2" Expanded="Expander_Expanded">
+                        <Grid MouseDown="MetroWindow_MouseDown" RenderOptions.ClearTypeHint="Enabled" TextOptions.TextFormattingMode="Display" Height="auto" Width="auto">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="90*"/>
+                                <RowDefinition Height="270*"/>
+                                <RowDefinition Height="16*"/>
+                                <RowDefinition Height="54*"/>
+                            </Grid.RowDefinitions>
+                            <DockPanel Grid.Row="0" Margin="0" SizeChanged="DockPanel_SizeChanged" HorizontalAlignment="Stretch" Width="auto" VerticalAlignment="Top">
+                                <md:Chip x:Name="CurrentDesc" DockPanel.Dock="Left" Content="{Binding Source={StaticResource current}, XPath=/s:SubscribableViewModel/s:Name}" Margin="2,5,0,0">
+                                    <md:Chip.Icon>
+                                        <Image Source="{Binding Source={StaticResource current}, XPath=/s:SubscribableViewModel/s:Icon}"/>
+                                    </md:Chip.Icon>
+                                </md:Chip>
+                                <ListView MouseDown="MetroWindow_MouseDown" x:Name="CurrentWallpapers" ItemsSource="{Binding CurrentBackgrounds}" DockPanel.Dock="Right"
+                                         HorizontalContentAlignment="Right" SelectionChanged="CurrentWallpapers_SelectionChanged">
+                                    <ListView.Template>
+                                        <ControlTemplate TargetType="{x:Type ListView}">
+                                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" PreviewMouseWheel="ScrollViewer_MouseWheel">
+                                                <StackPanel  Orientation="Horizontal" IsItemsHost="True" HorizontalAlignment="Right"/>
+                                            </ScrollViewer>
+                                        </ControlTemplate>
+                                    </ListView.Template>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding ConverterParameter=400, Converter={StaticResource imgConverter}, IsAsync=True}" Stretch="Fill" Margin="0,0,0,0" Height="50"/>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </DockPanel>
+                            <Grid MouseDown="MetroWindow_MouseDown" >
+                                <DockPanel LastChildFill="True" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="0,50,0,20">
+                                    <Button Content="Prev" DockPanel.Dock="Left" Click="onClickPreviousBtn" />
+                                    <Button Content="Next" DockPanel.Dock="Right" Click="onClickNextBtn"/>
+                                    <ListBox MouseDown="MetroWindow_MouseDown" x:Name="Carousel" ItemsSource="{Binding Photos}"  Grid.RowSpan="3" ItemTemplate="{StaticResource LargeImage}"  Height="320" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="1" >
+                                        <ListBox.Template>
+                                            <ControlTemplate TargetType="{x:Type ListBox}">
+                                                <Border x:Name="border1" CornerRadius="5">
+                                                    <ScrollViewer x:Name="scrallviewer"  HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_MouseWheel" >
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" IsItemsHost="True"/>
+                                                    </ScrollViewer>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </ListBox.Template>
+                                    </ListBox>
+                                </DockPanel>
+                            </Grid>
+                        </Grid>
+                    </Expander>
+
+                    <Expander Header="Theme"
+                              HorizontalAlignment="Left"
+                              Background="#252525"
+                              Opacity="0.85"
+                              VerticalAlignment="Top"
+                              IsExpanded="False"                 
+                              Height="auto"
+                              Width="903" Margin="0,10,0,10" Expanded="Expander_Expanded">
+                        <Grid MouseDown="MetroWindow_MouseDown" Margin="10,15,10,15" >
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="350*"/>
+                                <ColumnDefinition Width="350*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid  MouseDown="MetroWindow_MouseDown">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Margin="0,10" Grid.Row="0" Background="#252525" Opacity="1" >
+                                    <ListBox x:Name="SourceChoices" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,0,10,0" Padding="20,0,20,0" 
+                                             ItemsSource="{Binding Source={StaticResource themes}, XPath=s:ArrayOfSubscribableViewModel/s:SubscribableViewModel}" 
+                                             ItemTemplate="{StaticResource Choices}"
+                                             SelectionChanged="SourceChoices_SelectionChanged" LayoutUpdated="SourceChoices_LayoutUpdated"/>
+                                </Grid>
+                                <Grid Grid.Row="1" Background="#252525" Opacity="1" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*" />
+                                        <ColumnDefinition Width="3*" />
+                                        <ColumnDefinition Width="3*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button x:Name="ResetBtn" Content="Reset" Grid.Column="0"  VerticalAlignment="Bottom" Width="75" Click="ResetBtn_Click" IsEnabled="False" Visibility="Hidden"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid HorizontalAlignment="Stretch" Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid MouseDown="MetroWindow_MouseDown" Margin="0,10" HorizontalAlignment="Left" Grid.Row="0" >
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="5,6,5,5" CanContentScroll="True">
+                                        <md:Card Margin="0" VerticalAlignment="Top" MinWidth="500" Width="451" MinHeight="130" HorizontalAlignment="Stretch">
+                                            <Grid MouseDown="MetroWindow_MouseDown" Margin="5,0,0,0" HorizontalAlignment="Stretch">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="32*" />
+                                                    <RowDefinition Height="32*" />
+                                                    <RowDefinition Height="26*" />
+                                                    <RowDefinition Height="26*" />
+                                                    <RowDefinition Height="26*" />
+                                                    <RowDefinition Height="26*" />
+                                                    <RowDefinition Height="26*" />
+                                                    <RowDefinition Height="26*" />
+                                                </Grid.RowDefinitions>
+                                                <Label Grid.Row="0" x:Name="Label2" Content="THEME SPECIFIC SETTINGS" HorizontalAlignment="Left" Margin="97,0,0,0" VerticalAlignment="Top" Width="234" FontWeight="Bold"/>
+                                                <Grid Grid.Row="1" >
+                                                    <Controls:NumericUpDown x:Name="intervalMins" Height="30" Width="70"  Minimum="1" Maximum="144144" Interval="1" HorizontalAlignment="Left"/>
+                                                    <Label x:Name="label1" Content="(mins) wallpaper rotation interval" HorizontalAlignment="Left"  Width="234" Margin="70,-0,0,0"/>
+                                                </Grid>
+                                                <StackPanel Grid.Row="2">
+                                                    <ToggleButton x:Name="DoShuffle" Height="25" Width="60" HorizontalAlignment="Left" IsChecked="True" IsEnabled="False"/>
+                                                    <Label x:Name="label2" Content="Shuffle the background pictures" HorizontalAlignment="Left" Width="234" Margin="70,-26,0,0"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Row="3">
+                                                    <ToggleButton x:Name="SyncTheme" Height="25" Width="60" HorizontalAlignment="Left" />
+                                                    <Label x:Name="label6" Content="Sync this theme across your devices" HorizontalAlignment="Left"  Width="260" Margin="70,-26,0,0"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Row="4">
+                                                    <ToggleButton x:Name="LinkFolder" Height="25" Width="60" HorizontalAlignment="Left" IsChecked="True" IsEnabled="False"/>
+                                                    <Label x:Name="label5" Content="Link the folder to your 'Pictures' folder" HorizontalAlignment="Left"  Width="273" Margin="70,-26,0,0"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Row="5">
+                                                    <ToggleButton x:Name="AutoColor" Height="25" Width="60" HorizontalAlignment="Left" IsChecked="True" Checked="AutoColor_Checked" Unchecked="AutoColor_Checked"/>
+                                                    <Label x:Name="label3" Content="Adjust the theme colours to match the picture" HorizontalAlignment="Left"  Width="234" Margin="70,-26,0,0"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Row="6">
+                                                    <ToggleButton x:Name="DarkThemeEnable" Height="25" Width="60" HorizontalAlignment="Left" IsChecked="False" Checked="DarkThemeEnable_Checked" Unchecked="DarkThemeEnable_Checked"/>
+                                                    <Label x:Name="label4" Content="Enable the Dark metro theme" HorizontalAlignment="Left"  Width="234" Margin="70,-26,0,0"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Row="8">
+                                                    <ToggleButton x:Name="EmbossTitle" Height="25" Width="60" HorizontalAlignment="Left" IsChecked="False" Checked="EmbossTitle_Checked" Unchecked="EmbossTitle_Checked"/>
+                                                    <Label x:Name="label" Content="Display the title on the picture" HorizontalAlignment="Left"  Width="234" Margin="70,-26,0,0"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </md:Card>
+                                    </ScrollViewer>
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <Button x:Name="btnApply" Content="Apply" HorizontalAlignment="Right" Width="80" Click="BtnApply_Click" Height="32" IsEnabled="False"/>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Expander>
+
+                    <Expander Header="Feeds"
+                        HorizontalAlignment="Left"
+                        Background="#252525"
+                        Margin="0,10,0,10"
+                        VerticalAlignment="Top"
+                        IsExpanded="False"
+                        Height="auto"
+                        Opacity="0.85"          
+                        Width="903" Grid.RowSpan="2" Expanded="Expander_Expanded">
+                        <Grid RenderOptions.ClearTypeHint="Enabled" TextOptions.TextFormattingMode="Display">
+
+                            <Grid.Resources>
+                                <!--  for ne metro style  -->
+                                <Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type DataGridColumnHeadersPresenter}">
+                                                <Grid  MouseDown="MetroWindow_MouseDown">
+                                                    <Border Background="Transparent"
+                                                BorderBrush="{DynamicResource GrayBrush5}"
+                                                BorderThickness="0 0 0 3"
+                                                IsHitTestVisible="False" />
+                                                    <ItemsPresenter />
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Grid.Resources>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <GroupBox Grid.Row="0" Header="{Binding Items.Count, ElementName=MetroDataGrid, Mode=OneWay}" HeaderStringFormat="{}{0} Feed(s) found">
+                                <DataGrid x:Name="MetroDataGrid" Margin="0,7,0,-3"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserReorderColumns="False"
+                                      CanUserResizeColumns="True"
+                                      CanUserResizeRows="True"
+                                      EnableColumnVirtualization="False"
+                                      EnableRowVirtualization="False"
+                                      IsReadOnly="True"
+                                      ItemsSource="{Binding Feeds}"
+                                      RenderOptions.ClearTypeHint="Enabled"
+                                      SelectionUnit="FullRow"
+                                      Height="300"
+                                      VerticalAlignment="Stretch"
+                                      TextOptions.TextFormattingMode="Display">
+                                    <DataGrid.Columns>
+                                        <DataGridCheckBoxColumn Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=DataGridRow}, Path=IsSelected, Mode=TwoWay}"
+                                                EditingElementStyle="{DynamicResource MetroDataGridCheckBox}"
+                                                ElementStyle="{DynamicResource MetroDataGridCheckBox}"
+                                                Header="" />
+                                        <DataGridTextColumn Binding="{Binding Title, TargetNullValue='...'}" Header="Title"  />
+                                        <DataGridTextColumn Binding="{Binding ItemCount, TargetNullValue='...'}" Header="Image Count" />
+                                        <DataGridTextColumn Binding="{Binding LastDownloadTime, StringFormat={}{0:MM/dd/yyyy}, TargetNullValue='...'}" Header="Updated"/>
+                                        <DataGridTextColumn Binding="{Binding DownloadStatus, TargetNullValue='...'}" Header="Status"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </GroupBox>
+                            <ContentControl Grid.Row="1"
+                                Margin="0,2,0,2"
+                                HorizontalAlignment="Left"
+                                DataContext="{Binding ElementName=MetroDataGrid}"
+                                Template="{StaticResource ConfigDataTemplate}" Width="370" />
+                            <Grid Grid.Row="2" Margin="0,2,0,2">
+                                <Button x:Name="RefreshBtn" Width="20" Grid.Column="0" Margin="0,0,10,0" Style="{DynamicResource MetroCircleButtonStyle}" Click="RefreshBtn_Click" VerticalAlignment="Center" HorizontalContentAlignment="Stretch" HorizontalAlignment="Right">
+                                    <iconPacks:PackIconModern Width="Auto" Height="Auto" Kind="Refresh" />
+                                </Button>
+
+                                <Button x:Name="FeedResetBtn" Width="20" Grid.Column="0" Margin="0,0,50,0" Style="{DynamicResource MetroCircleButtonStyle}" Click="ResetFeed_Click" VerticalAlignment="Center" HorizontalContentAlignment="Stretch" HorizontalAlignment="Right">
+                                    <iconPacks:PackIconModern Width="Auto" Height="Auto" Kind="Reset"/>
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Expander>
+
+                </StackPanel>
+            </Grid>
+
+        </md:Card>
+
+    </Grid>
+</Controls:MetroWindow>

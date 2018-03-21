@@ -1,0 +1,24 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ExampleLDWApp.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="MinWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1920</Value>
+    </Setting>
+    <Setting Name="MinHeight" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1080</Value>
+    </Setting>
+    <Setting Name="PCIsSetup" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ClientHash" Type="System.String" Scope="User">
+      <Value Profile="(Default)">n29XkB7o5Eu3V9BD</Value>
+    </Setting>
+    <Setting Name="ServerDomain" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://indicms.com</Value>
+    </Setting>
+    <Setting Name="ClientID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ea56a5b3-cf15-4295-bcf9-a32d4b6e209b</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

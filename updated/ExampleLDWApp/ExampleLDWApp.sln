@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27406.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleLDWApp", "ExampleLDWApp.csproj", "{7806FF6B-159F-42AF-AD8D-0F8CF103B168}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedLibs", "..\SharedLibs\SharedLibs.csproj", "{5C295A29-4C0D-41A6-85F5-44E8F1BE0CE5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7806FF6B-159F-42AF-AD8D-0F8CF103B168}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7806FF6B-159F-42AF-AD8D-0F8CF103B168}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7806FF6B-159F-42AF-AD8D-0F8CF103B168}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7806FF6B-159F-42AF-AD8D-0F8CF103B168}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C295A29-4C0D-41A6-85F5-44E8F1BE0CE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C295A29-4C0D-41A6-85F5-44E8F1BE0CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C295A29-4C0D-41A6-85F5-44E8F1BE0CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C295A29-4C0D-41A6-85F5-44E8F1BE0CE5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {16C42F3A-5A43-4631-BA0C-222D77AE813E}
+	EndGlobalSection
+EndGlobal
